@@ -1,0 +1,93 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r, include=TRUE}
+library(dplyr)
+library(readxl)
+
+extract_apoe_df <- function(excel_path) {
+  read_excel(excel_path, skip = 2) %>% 
+    filter(!is.na(`Patient ID`)) %>% 
+    select(`Patient ID`, `APOE`)
+}
+
+extract_geno_ids <- function(excel_path) {
+  read_excel(excel_path, skip = 2) %>% 
+    filter(!is.na(`Patient ID`)) %>% 
+    pull(`Patient ID`)
+}
+```
+
+
+# Old Site (20)
+
+## APOE
+
+```{r}
+df_old_apoe <- 
+  extract_apoe_df(paste0(here::here(), "/ncradapoe2020_site20.xlsx"))
+
+ids_old_apoe <- df_old_apoe %>% pull(`Patient ID`)
+```
+
+## Genotyped
+
+```{r}
+ids_old_geno <- 
+  extract_geno_ids(paste0(here::here(), "/genotyped2019_site20.xlsx"))
+```
+
+
+# New Site (43)
+
+## APOE
+
+```{r}
+df_new_apoe <- 
+  extract_apoe_df(paste0(here::here(), "/ncradapoe2020_site43.xlsx"))
+
+ids_new_apoe <- df_new_apoe %>% pull(`Patient ID`)
+```
+
+
+## Genotyped
+
+```{r}
+ids_new_geno <- 
+  extract_geno_ids(paste0(here::here(), "/genotyped2019_site43.xlsx"))
+```
+
+
+# Overlap between Old Site and New Site
+
+## APOE
+
+How many APOE IDs overlap between old-site and new-site datasets
+
+```{r}
+sum(ids_old_apoe %in% ids_new_apoe)
+```
+
+Which IDs?
+
+```{r}
+ids_old_apoe[ids_old_apoe %in% ids_new_apoe]
+```
+
+
+## Genotyped
+
+How many genotyped IDs overlap between old-site and new-site datasets?
+
+```{r}
+sum(ids_old_geno %in% ids_new_geno)
+```
+
+Which IDs?
+
+```{r}
+ids_old_geno[ids_old_geno %in% ids_new_geno]
+```
+
